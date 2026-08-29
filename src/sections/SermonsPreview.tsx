@@ -1,0 +1,79 @@
+import { Link } from 'react-router-dom';
+import { Play, ArrowRight, Calendar, User } from 'lucide-react';
+import Reveal from '../components/Reveal';
+import { sermons } from '../data/sermons';
+
+export default function SermonsPreview() {
+  const featured = sermons.find((s) => s.featured) || sermons[0];
+  const recent = sermons.filter((s) => s.id !== featured.id).slice(0, 3);
+
+  return (
+    <section className="section-pad bg-white relative overflow-hidden">
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-accent-100 rounded-full blur-[120px] opacity-40 pointer-events-none" />
+      <div className="container-tnc relative">
+        <Reveal>
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-12 gap-4">
+            <div>
+              <p className="text-primary-700 font-600 text-sm uppercase tracking-widest mb-3">Latest Messages</p>
+              <h2 className="font-display text-3xl md:text-5xl font-700 text-ink">Watch & Listen</h2>
+            </div>
+            <Link to="/sermons" className="btn-ghost text-primary-700">
+              All Sermons <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </Reveal>
+
+        <div className="grid lg:grid-cols-2 gap-8">
+          {/* Featured */}
+          <Reveal>
+            <Link to="/sermons" className="group block relative rounded-3xl overflow-hidden shadow-glow">
+              <div className="aspect-[16/10] overflow-hidden">
+                <img
+                  src={featured.image}
+                  alt={featured.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent" />
+              <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-accent-500 text-white text-xs font-600">
+                Featured
+              </div>
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-white/90 flex items-center justify-center group-hover:scale-110 transition-transform shadow-glow">
+                <Play className="w-6 h-6 text-primary-800 ml-1" fill="currentColor" />
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 p-6">
+                <span className="text-secondary-300 text-xs font-600 uppercase tracking-wider">{featured.category}</span>
+                <h3 className="font-display text-2xl font-700 text-white mt-1 mb-2">{featured.title}</h3>
+                <div className="flex items-center gap-4 text-white/70 text-sm">
+                  <span className="flex items-center gap-1.5"><User className="w-4 h-4" /> {featured.speaker}</span>
+                  <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4" /> {new Date(featured.date).toLocaleDateString('en', { month: 'short', day: 'numeric' })}</span>
+                </div>
+              </div>
+            </Link>
+          </Reveal>
+
+          {/* Recent list */}
+          <div className="flex flex-col gap-4">
+            {recent.map((s, i) => (
+              <Reveal key={s.id} delay={i * 0.1}>
+                <Link to="/sermons" className="group flex gap-4 p-3 rounded-2xl hover:bg-gray-50 transition-colors">
+                  <div className="relative w-28 h-20 rounded-xl overflow-hidden flex-shrink-0">
+                    <img src={s.image} alt={s.title} className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-ink/30 flex items-center justify-center group-hover:bg-ink/50 transition-colors">
+                      <Play className="w-5 h-5 text-white" fill="currentColor" />
+                    </div>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-xs font-600 text-primary-600 uppercase tracking-wider">{s.category}</span>
+                    <h4 className="font-600 text-ink group-hover:text-primary-700 transition-colors line-clamp-1">{s.title}</h4>
+                    <p className="text-sm text-ink/50 mt-0.5">{s.speaker} · {s.scripture}</p>
+                  </div>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
