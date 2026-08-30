@@ -106,7 +106,7 @@ as $$
   select exists (
     select 1 from public.profiles
     where id = auth.uid()
-      and role in ('super_admin','admin','editor')
+      and role in ('super_admin','admin')
   );
 $$;
 
@@ -218,3 +218,24 @@ begin
   begin alter publication supabase_realtime add table public.events; exception when duplicate_object then null; end;
   begin alter publication supabase_realtime add table public.gallery_items; exception when duplicate_object then null; end;
 end $$;
+
+-- Default CMS settings. Admin can change these from the Settings screen.
+insert into public.site_settings(key,value) values
+ ('church_name','"The Neighbourhood Church"'::jsonb),
+ ('tagline','""'::jsonb),
+ ('email','""'::jsonb),
+ ('phone','""'::jsonb),
+ ('address','""'::jsonb),
+ ('facebook','""'::jsonb),
+ ('instagram','""'::jsonb),
+ ('youtube','""'::jsonb),
+ ('giving_ngn_enabled','true'::jsonb),
+ ('giving_usd_enabled','true'::jsonb),
+ ('default_giving_currency','"NGN"'::jsonb),
+ ('default_event_registration_enabled','true'::jsonb)
+on conflict (key) do nothing;
+
+
+-- Administrators can update only their own profile (including avatar).
+drop policy if exists profiles_self_update on public.profiles;
+create policy profiles_self_update on public.profiles for update to authenticated using (id = auth.uid()) with check (id = auth.uid());

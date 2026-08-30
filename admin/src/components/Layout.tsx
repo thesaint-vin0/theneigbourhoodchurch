@@ -2,6 +2,7 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { BarChart3, CalendarDays, Church, FileText, GalleryHorizontal, HeartHandshake, Images, LogOut, Menu, Settings, X } from 'lucide-react'
 import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
+import { UserCircle } from 'lucide-react'
 
 const links = [
   ['/','Dashboard',BarChart3],
@@ -11,7 +12,7 @@ const links = [
   ['/media','Media',Images],
   ['/forms','Forms',Church],
   ['/giving','Giving',HeartHandshake],
-  ['/admin-management','Admin Management',Settings],['/settings','Settings',Settings],
+  ['/admin-management','Admin Management',Settings],['/settings','Settings',Settings],['/account','My Account',UserCircle],
 ] as const
 
 export function Layout() {
