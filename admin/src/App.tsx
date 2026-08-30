@@ -13,5 +13,7 @@ import Giving from './pages/Giving'
 import Settings from './pages/Settings'
 import AdminManagement from './pages/AdminManagement'
 import Account from './pages/Account'
+import Pastors from './pages/Pastors'
+import HomeContent from './pages/HomeContent'
 
-export default function App(){return <AuthProvider><BrowserRouter><Routes><Route path="/login" element={<Login/>}/><Route element={<ProtectedRoute><Layout/></ProtectedRoute>}><Route path="/" element={<Dashboard/>}/><Route path="/sermons" element={<Sermons/>}/><Route path="/events" element={<Events/>}/><Route path="/gallery" element={<Gallery/>}/><Route path="/media" element={<Media/>}/><Route path="/forms" element={<Forms/>}/><Route path="/giving" element={<Giving/>}/><Route path="/admin-management" element={<AdminManagement/>}/><Route path="/settings" element={<Settings/>}/><Route path="/account" element={<Account/>}/></Route></Routes></BrowserRouter></AuthProvider>}
+export default function App(){return <AuthProvider><BrowserRouter><Routes><Route path="/login" element={<Login/>}/><Route element={<ProtectedRoute><Layout/></ProtectedRoute>}><Route path="/" element={<Dashboard/>}/><Route path="/sermons" element={<Sermons/>}/><Route path="/events" element={<Events/>}/><Route path="/gallery" element={<Gallery/>}/><Route path="/media" element={<Media/>}/><Route path="/forms" element={<Forms/>}/><Route path="/giving" element={<Giving/>}/><Route path="/admin-management" element={<AdminManagement/>}/><Route path="/settings" element={<Settings/>}/><Route path="/account" element={<Account/>}/><Route path="/pastors" element={<Pastors/>}/><Route path="/home-content" element={<HomeContent/>}/></Route></Routes></BrowserRouter></AuthProvider>}

@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom';
 import { Church, Mail, Phone, MapPin, ArrowUp, Facebook, Instagram, Twitter, Youtube, Send } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { navLinks } from '../data/navigation';
 import { churchInfo } from '../data/site';
+import { getSiteContent, SiteContent } from '../services/siteContent';
 import { supabase } from '../services/supabase';
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -14,6 +15,10 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
 
 export default function Footer() {
   const [email, setEmail] = useState('');
+  const [site, setSite] = useState<SiteContent | null>(null);
+  useEffect(() => { getSiteContent().then(setSite); }, []);
+  const info = site || churchInfo;
+  const socialLinks = [{label:'Facebook',url:info.facebook,icon:'facebook'},{label:'Instagram',url:info.instagram,icon:'instagram'},{label:'Twitter',url:info.twitter,icon:'twitter'},{label:'YouTube',url:info.youtube,icon:'youtube'}].filter(s => s.url);
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
   const subscribe = async (e: React.FormEvent) => {
@@ -53,7 +58,7 @@ export default function Footer() {
               The Neighbourhood Church. Where Faith Meets Family. A church where everyone belongs.
             </p>
             <div className="flex gap-3">
-              {churchInfo.socials.map((s) => {
+              {socialLinks.map((s) => {
                 const Icon = iconMap[s.icon] || Church;
                 return (
                   <a
@@ -87,7 +92,7 @@ export default function Footer() {
           <div>
             <h4 className="font-600 text-sm uppercase tracking-wider text-white/40 mb-4">Service Times</h4>
             <ul className="space-y-3">
-              {churchInfo.serviceTimes.map((s) => (
+              {(site?.service_times || churchInfo.serviceTimes).map((s) => (
                 <li key={s.label}>
                   <p className="text-sm font-500 text-white">{s.label}</p>
                   <p className="text-sm text-white/60">{s.day} · {s.time}</p>
@@ -129,14 +134,14 @@ export default function Footer() {
 
         {/* Contact bar */}
         <div className="flex flex-wrap gap-6 pb-8 border-b border-white/10">
-          <a href={`mailto:${churchInfo.email}`} className="flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors">
-            <Mail className="w-4 h-4" /> {churchInfo.email}
+          <a href={`mailto:${info.email}`} className="flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors">
+            <Mail className="w-4 h-4" /> {info.email}
           </a>
-          <a href={`tel:${churchInfo.phone}`} className="flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors">
-            <Phone className="w-4 h-4" /> {churchInfo.phone}
+          <a href={`tel:${info.phone}`} className="flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors">
+            <Phone className="w-4 h-4" /> {info.phone}
           </a>
           <span className="flex items-center gap-2 text-sm text-white/60">
-            <MapPin className="w-4 h-4" /> {churchInfo.address}
+            <MapPin className="w-4 h-4" /> {info.address}
           </span>
         </div>
 

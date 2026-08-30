@@ -2,8 +2,14 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Clock, MapPin, ArrowRight } from 'lucide-react';
 import { churchInfo } from '../data/site';
+import { getSiteContent, SiteContent } from '../services/siteContent';
+import { useEffect, useState } from 'react';
 
 export default function LiveBanner() {
+  const [site, setSite] = useState<SiteContent | null>(null);
+  useEffect(() => { getSiteContent().then(setSite); }, []);
+  const info = site || churchInfo;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: -10 }}
@@ -23,7 +29,7 @@ export default function LiveBanner() {
               <Clock className="w-3.5 h-3.5" /> 9:00 AM & 11:30 AM
             </span>
             <span className="hidden md:flex items-center gap-1.5 text-sm text-ink/60">
-              <MapPin className="w-3.5 h-3.5" /> {churchInfo.address}
+              <MapPin className="w-3.5 h-3.5" /> {info.address}
             </span>
           </div>
           <Link to="/sermons" className="flex items-center gap-1 text-sm font-600 text-primary-700 hover:gap-2 transition-all">

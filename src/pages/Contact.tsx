@@ -1,12 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Send, CheckCircle, MessageCircle, Clock } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import Reveal from '../components/Reveal';
 import { churchInfo } from '../data/site';
+import { getSiteContent, SiteContent } from '../services/siteContent';
 import { supabase } from '../services/supabase';
 
 export default function Contact() {
+  const [site, setSite] = useState<SiteContent | null>(null);
+  useEffect(() => { getSiteContent().then(setSite); }, []);
+  const info = site || churchInfo;
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
@@ -29,21 +33,21 @@ export default function Contact() {
             {/* Contact info */}
             <div className="space-y-4">
               <Reveal>
-                <a href={`mailto:${churchInfo.email}`} className="block glass rounded-2xl p-6 hover:shadow-glow transition-all">
+                <a href={`mailto:${info.email}`} className="block glass rounded-2xl p-6 hover:shadow-glow transition-all">
                   <div className="w-11 h-11 rounded-xl bg-primary-100 flex items-center justify-center mb-3">
                     <Mail className="w-5 h-5 text-primary-700" />
                   </div>
                   <p className="text-sm text-ink/50">Email</p>
-                  <p className="font-600 text-ink">{churchInfo.email}</p>
+                  <p className="font-600 text-ink">{info.email}</p>
                 </a>
               </Reveal>
               <Reveal delay={0.08}>
-                <a href={`tel:${churchInfo.phone}`} className="block glass rounded-2xl p-6 hover:shadow-glow transition-all">
+                <a href={`tel:${info.phone}`} className="block glass rounded-2xl p-6 hover:shadow-glow transition-all">
                   <div className="w-11 h-11 rounded-xl bg-secondary-100 flex items-center justify-center mb-3">
                     <Phone className="w-5 h-5 text-secondary-600" />
                   </div>
                   <p className="text-sm text-ink/50">Phone</p>
-                  <p className="font-600 text-ink">{churchInfo.phone}</p>
+                  <p className="font-600 text-ink">{info.phone}</p>
                 </a>
               </Reveal>
               <Reveal delay={0.16}>
@@ -52,16 +56,16 @@ export default function Contact() {
                     <MapPin className="w-5 h-5 text-accent-600" />
                   </div>
                   <p className="text-sm text-ink/50">Address</p>
-                  <p className="font-600 text-ink">{churchInfo.address}</p>
+                  <p className="font-600 text-ink">{info.address}</p>
                 </div>
               </Reveal>
               <Reveal delay={0.24}>
-                <a href={`https://wa.me/${churchInfo.whatsapp.replace(/[^0-9]/g, '')}`} target="_blank" rel="noreferrer" className="block glass rounded-2xl p-6 hover:shadow-glow transition-all">
+                <a href={`https://wa.me/${info.whatsapp.replace(/[^0-9]/g, '')}`} target="_blank" rel="noreferrer" className="block glass rounded-2xl p-6 hover:shadow-glow transition-all">
                   <div className="w-11 h-11 rounded-xl bg-green-100 flex items-center justify-center mb-3">
                     <MessageCircle className="w-5 h-5 text-green-600" />
                   </div>
                   <p className="text-sm text-ink/50">WhatsApp</p>
-                  <p className="font-600 text-ink">{churchInfo.whatsapp}</p>
+                  <p className="font-600 text-ink">{info.whatsapp}</p>
                 </a>
               </Reveal>
               <Reveal delay={0.32}>
@@ -70,7 +74,7 @@ export default function Contact() {
                     <Clock className="w-5 h-5 text-primary-700" />
                   </div>
                   <p className="text-sm text-ink/50 mb-2">Service Times</p>
-                  {churchInfo.serviceTimes.map((s) => (
+                  {(site?.service_times || churchInfo.serviceTimes).map((s) => (
                     <p key={s.label} className="text-sm text-ink/70"><span className="font-500">{s.day}:</span> {s.time}</p>
                   ))}
                 </div>
@@ -110,7 +114,7 @@ export default function Contact() {
                 <div className="rounded-3xl overflow-hidden shadow-soft h-80">
                   <iframe
                     title="Church Location"
-                    src={churchInfo.mapEmbed}
+                    src={info.map_embed}
                     className="w-full h-full border-0"
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"

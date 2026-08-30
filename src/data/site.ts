@@ -2,7 +2,7 @@ export const churchInfo = {
   name: 'The Neighbourhood Church',
   tagline: 'Where Faith Meets Family.',
   address: '12 Grace Avenue, Faith District, Lagos, Nigeria',
-  phone: '+234 801 234 5678',
+  phone: '+234 806 010 6395',
   whatsapp: '+234 801 234 5678',
   email: 'hello@tnc.church',
   serviceTimes: [

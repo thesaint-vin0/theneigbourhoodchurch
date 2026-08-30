@@ -54,10 +54,10 @@ export interface Stat {
 }
 
 export const stats: Stat[] = [
-  { value: 3500, suffix: '+', label: 'Members' },
+  { value: 200, suffix: '+', label: 'Members' },
   { value: 18, suffix: '', label: 'Years Serving' },
   { value: 10, suffix: '', label: 'Ministries' },
-  { value: 42, suffix: '', label: 'Countries Reached' },
+  { value: 1, suffix: '+', label: 'Countries Reached' },
 ];
 
 export interface Belief {
