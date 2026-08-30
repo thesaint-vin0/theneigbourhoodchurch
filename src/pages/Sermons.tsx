@@ -1,169 +1,26 @@
-import { useState, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Search, Download, Youtube, Calendar, User, BookOpen } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import Reveal from '../components/Reveal';
-import { sermons, sermonCategories } from '../data/sermons';
+import { getSermons, sermonCategories, type CmsSermon } from '../services/cms';
 
 export default function Sermons() {
+  const [items, setItems] = useState<CmsSermon[]>([]);
   const [category, setCategory] = useState('All');
   const [search, setSearch] = useState('');
-  const [selected, setSelected] = useState<typeof sermons[0] | null>(null);
-
-  const filtered = useMemo(() => {
-    return sermons.filter((s) => {
-      const matchCat = category === 'All' || s.category === category;
-      const matchSearch =
-        s.title.toLowerCase().includes(search.toLowerCase()) ||
-        s.speaker.toLowerCase().includes(search.toLowerCase()) ||
-        s.scripture.toLowerCase().includes(search.toLowerCase());
-      return matchCat && matchSearch;
-    });
-  }, [category, search]);
-
-  const featured = sermons.find((s) => s.featured) || sermons[0];
-
-  return (
-    <>
-      <PageHeader title="Sermons" subtitle="Listen, watch, and grow in your faith." image="https://images.pexels.com/photos/2889440/pexels-photo-2889440.jpeg?auto=compress&cs=tinysrgb&w=1200" />
-
-      {/* Featured */}
-      <section className="px-6 md:px-12 -mt-8 relative z-10">
-        <div className="container-tnc">
-          <Reveal>
-            <div className="relative rounded-3xl overflow-hidden shadow-glow">
-              <img src={featured.image} alt={featured.title} className="w-full aspect-[21/9] object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/40 to-transparent" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <button onClick={() => setSelected(featured)} className="w-20 h-20 rounded-full bg-white/90 flex items-center justify-center hover:scale-110 transition-transform shadow-glow">
-                  <Play className="w-8 h-8 text-primary-800 ml-1" fill="currentColor" />
-                </button>
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10">
-                <span className="px-3 py-1 rounded-full bg-accent-500 text-white text-xs font-600">Featured Sermon</span>
-                <h2 className="font-display text-2xl md:text-4xl font-700 text-white mt-3 mb-3">{featured.title}</h2>
-                <div className="flex flex-wrap gap-4 text-white/70 text-sm">
-                  <span className="flex items-center gap-1.5"><User className="w-4 h-4" /> {featured.speaker}</span>
-                  <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4" /> {new Date(featured.date).toLocaleDateString('en', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
-                  <span className="flex items-center gap-1.5"><BookOpen className="w-4 h-4" /> {featured.scripture}</span>
-                </div>
-              </div>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* Search & filter */}
-      <section className="section-pad bg-white">
-        <div className="container-tnc">
-          <Reveal>
-            <div className="flex flex-col md:flex-row gap-4 mb-10">
-              <div className="relative flex-1">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-ink/40" />
-                <input
-                  type="text"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search by title, speaker, or scripture..."
-                  className="w-full pl-12 pr-4 py-3.5 rounded-full bg-gray-50 border border-gray-100 focus:outline-none focus:border-primary-300 focus:bg-white transition-all"
-                />
-              </div>
-            </div>
-          </Reveal>
-
-          <Reveal delay={0.1}>
-            <div className="flex flex-wrap gap-2 mb-10">
-              {sermonCategories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setCategory(cat)}
-                  className={`px-4 py-2 rounded-full text-sm font-500 transition-all ${
-                    category === cat
-                      ? 'bg-primary-800 text-white shadow-soft'
-                      : 'bg-gray-50 text-ink/60 hover:bg-primary-50 hover:text-primary-700'
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-          </Reveal>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered.map((s, i) => (
-              <Reveal key={s.id} delay={i * 0.06}>
-                <div className="group rounded-2xl overflow-hidden bg-white border border-gray-100 hover:shadow-glow transition-all duration-500">
-                  <div className="relative aspect-video overflow-hidden">
-                    <img src={s.image} alt={s.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                    <div className="absolute inset-0 bg-ink/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button onClick={() => setSelected(s)} className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center hover:scale-110 transition-transform">
-                        <Play className="w-6 h-6 text-primary-800 ml-0.5" fill="currentColor" />
-                      </button>
-                    </div>
-                    <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-white/90 text-xs font-600 text-primary-700">{s.category}</span>
-                  </div>
-                  <div className="p-5">
-                    <h3 className="font-600 text-ink group-hover:text-primary-700 transition-colors mb-1.5">{s.title}</h3>
-                    <p className="text-sm text-ink/50 mb-3">{s.speaker} · {s.scripture}</p>
-                    <div className="flex items-center gap-3 text-sm">
-                      <button onClick={() => setSelected(s)} className="flex items-center gap-1.5 text-primary-700 font-500 hover:gap-2.5 transition-all">
-                        <Play className="w-3.5 h-3.5" /> Watch
-                      </button>
-                      <a href={s.notesUrl} className="flex items-center gap-1.5 text-ink/50 hover:text-primary-700 transition-colors">
-                        <Download className="w-3.5 h-3.5" /> Notes
-                      </a>
-                      <a href={`https://youtube.com/watch?v=${s.youtubeId}`} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-ink/50 hover:text-red-500 transition-colors ml-auto">
-                        <Youtube className="w-4 h-4" />
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-
-          {filtered.length === 0 && (
-            <div className="text-center py-20">
-              <p className="text-ink/50 text-lg">No sermons found. Try a different search.</p>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Video modal */}
-      <AnimatePresence>
-        {selected && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/80 backdrop-blur-sm"
-            onClick={() => setSelected(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="w-full max-w-3xl bg-black rounded-2xl overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="aspect-video">
-                <iframe
-                  src={`https://www.youtube.com/embed/${selected.youtubeId}`}
-                  title={selected.title}
-                  className="w-full h-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              </div>
-              <div className="p-5 bg-white">
-                <h3 className="font-display text-xl font-700 text-ink">{selected.title}</h3>
-                <p className="text-sm text-ink/60 mt-1">{selected.speaker} · {selected.scripture}</p>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
-  );
+  const [selected, setSelected] = useState<CmsSermon | null>(null);
+  useEffect(() => { getSermons().then(setItems); const ch=supabaseChannel(setItems); return ()=>ch(); }, []);
+  const cats = useMemo(() => sermonCategories(items), [items]);
+  const filtered = useMemo(() => items.filter(s => (category==='All'||s.category===category) && (s.title.toLowerCase().includes(search.toLowerCase())||s.speaker.toLowerCase().includes(search.toLowerCase())||s.scripture.toLowerCase().includes(search.toLowerCase()))), [items,category,search]);
+  const featured = items.find(s=>s.featured) || items[0];
+  if (!featured) return <><PageHeader title="Sermons" subtitle="Listen, watch, and grow in your faith." image="https://images.pexels.com/photos/2889440/pexels-photo-2889440.jpeg?auto=compress&cs=tinysrgb&w=1200"/><section className="section-pad bg-white"><div className="container-tnc text-center text-ink/50">No published sermons yet.</div></section></>;
+  return <>
+    <PageHeader title="Sermons" subtitle="Listen, watch, and grow in your faith." image="https://images.pexels.com/photos/2889440/pexels-photo-2889440.jpeg?auto=compress&cs=tinysrgb&w=1200" />
+    <section className="px-6 md:px-12 -mt-8 relative z-10"><div className="container-tnc"><Reveal><div className="relative rounded-3xl overflow-hidden shadow-glow"><img src={featured.image} alt={featured.title} className="w-full aspect-[21/9] object-cover"/><div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/40 to-transparent"/><div className="absolute inset-0 flex items-center justify-center"><button onClick={()=>setSelected(featured)} className="w-20 h-20 rounded-full bg-white/90 flex items-center justify-center hover:scale-110 transition-transform shadow-glow"><Play className="w-8 h-8 text-primary-800 ml-1" fill="currentColor"/></button></div><div className="absolute bottom-0 left-0 right-0 p-6 md:p-10"><span className="px-3 py-1 rounded-full bg-accent-500 text-white text-xs font-600">Featured Sermon</span><h2 className="font-display text-2xl md:text-4xl font-700 text-white mt-3 mb-3">{featured.title}</h2><div className="flex flex-wrap gap-4 text-white/70 text-sm"><span className="flex items-center gap-1.5"><User className="w-4 h-4"/>{featured.speaker}</span><span className="flex items-center gap-1.5"><Calendar className="w-4 h-4"/>{new Date(featured.date).toLocaleDateString('en',{month:'long',day:'numeric',year:'numeric'})}</span><span className="flex items-center gap-1.5"><BookOpen className="w-4 h-4"/>{featured.scripture}</span></div></div></div></Reveal></div></section>
+    <section className="section-pad bg-white"><div className="container-tnc"><Reveal><div className="flex flex-col md:flex-row gap-4 mb-10"><div className="relative flex-1"><Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-ink/40"/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search by title, speaker, or scripture..." className="w-full pl-12 pr-4 py-3.5 rounded-full bg-gray-50 border border-gray-100 focus:outline-none focus:border-primary-300 focus:bg-white transition-all"/></div></div></Reveal><Reveal delay={.1}><div className="flex flex-wrap gap-2 mb-10">{cats.map(cat=><button key={cat} onClick={()=>setCategory(cat)} className={`px-4 py-2 rounded-full text-sm font-500 transition-all ${category===cat?'bg-primary-800 text-white shadow-soft':'bg-gray-50 text-ink/60 hover:bg-primary-50 hover:text-primary-700'}`}>{cat}</button>)}</div></Reveal><div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">{filtered.map((s,i)=><Reveal key={s.id} delay={i*.06}><div className="group rounded-2xl overflow-hidden bg-white border border-gray-100 hover:shadow-glow transition-all duration-500"><div className="relative aspect-video overflow-hidden"><img src={s.image} alt={s.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"/><div className="absolute inset-0 bg-ink/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"><button onClick={()=>setSelected(s)} className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center"><Play className="w-6 h-6 text-primary-800" fill="currentColor"/></button></div><span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-white/90 text-xs font-600 text-primary-700">{s.category}</span></div><div className="p-5"><h3 className="font-600 text-ink group-hover:text-primary-700 mb-1.5">{s.title}</h3><p className="text-sm text-ink/50 mb-3">{s.speaker} · {s.scripture}</p><div className="flex items-center gap-3 text-sm"><button onClick={()=>setSelected(s)} className="flex items-center gap-1.5 text-primary-700 font-500"><Play className="w-3.5 h-3.5"/>Watch</button>{s.notesUrl&&<a href={s.notesUrl} className="flex items-center gap-1.5 text-ink/50"><Download className="w-3.5 h-3.5"/>Notes</a>}{s.youtubeId&&<a href={`https://youtube.com/watch?v=${s.youtubeId}`} target="_blank" rel="noreferrer" className="ml-auto text-ink/50"><Youtube className="w-4 h-4"/></a>}</div></div></div></Reveal>)}</div>{!filtered.length&&<div className="text-center py-20 text-ink/50 text-lg">No sermons found.</div>}</div></section>
+    <AnimatePresence>{selected&&<motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/80 backdrop-blur-sm" onClick={()=>setSelected(null)}><motion.div initial={{scale:.9,opacity:0}} animate={{scale:1,opacity:1}} className="w-full max-w-3xl bg-black rounded-2xl overflow-hidden" onClick={e=>e.stopPropagation()}><div className="aspect-video">{selected.youtubeId?<iframe src={`https://www.youtube.com/embed/${selected.youtubeId}`} title={selected.title} className="w-full h-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen/>:<video src={selected.videoUrl} controls className="w-full h-full"/>}</div><div className="p-5 bg-white"><h3 className="font-display text-xl font-700 text-ink">{selected.title}</h3><p className="text-sm text-ink/60 mt-1">{selected.speaker} · {selected.scripture}</p></div></motion.div></motion.div>}</AnimatePresence>
+  </>;
 }
+import { supabase } from '../services/supabase';
+function supabaseChannel(setItems: (x:CmsSermon[])=>void){const channel=supabase.channel('public-sermons').on('postgres_changes',{event:'*',schema:'public',table:'sermons'},()=>{getSermons().then(setItems)}).subscribe(); return ()=>{supabase.removeChannel(channel);};}

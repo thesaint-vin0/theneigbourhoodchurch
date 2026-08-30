@@ -1,0 +1,16 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { AuthProvider } from './context/AuthContext'
+import { ProtectedRoute } from './components/ProtectedRoute'
+import { Layout } from './components/Layout'
+import Login from './pages/Login'
+import Dashboard from './pages/Dashboard'
+import Sermons from './pages/Sermons'
+import Events from './pages/Events'
+import Gallery from './pages/Gallery'
+import Media from './pages/Media'
+import Forms from './pages/Forms'
+import Giving from './pages/Giving'
+import Settings from './pages/Settings'
+import AdminManagement from './pages/AdminManagement'
+
+export default function App(){return <AuthProvider><BrowserRouter><Routes><Route path="/login" element={<Login/>}/><Route element={<ProtectedRoute><Layout/></ProtectedRoute>}><Route path="/" element={<Dashboard/>}/><Route path="/sermons" element={<Sermons/>}/><Route path="/events" element={<Events/>}/><Route path="/gallery" element={<Gallery/>}/><Route path="/media" element={<Media/>}/><Route path="/forms" element={<Forms/>}/><Route path="/giving" element={<Giving/>}/><Route path="/admin-management" element={<AdminManagement/>}/><Route path="/settings" element={<Settings/>}/></Route></Routes></BrowserRouter></AuthProvider>}
