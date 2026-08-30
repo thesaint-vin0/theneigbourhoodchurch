@@ -34,7 +34,7 @@ export default function About() {
         <div className="container-tnc grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           <Reveal>
             <img
-              src="https://images.pexels.com/photos/2698849/pexels-photo-2698849.jpeg?auto=compress&cs=tinysrgb&w=800"
+              src="/images/him.jpg"
               alt="Church"
               className="rounded-3xl shadow-glow w-full object-cover aspect-[4/3]"
             />
