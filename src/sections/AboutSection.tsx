@@ -38,7 +38,7 @@ export default function About() {
           <Reveal>
             <div className="relative">
               <img
-                src="https://images.pexels.com/photos/4330187/pexels-photo-4330187.jpeg?auto=compress&cs=tinysrgb&w=800"
+                src="/images/comb.jpeg"
                 alt="Church congregation"
                 className="rounded-3xl shadow-glow w-full object-cover aspect-[4/3]"
               />

@@ -9,25 +9,25 @@ export const testimonials: Testimonial[] = [
   {
     name: 'James & Maria',
     role: 'Members since 2015',
-    image: 'https://images.pexels.com/photos/2564688/pexels-photo-2564688.jpeg?auto=compress&cs=tinysrgb&w=400',
+    image: 'https://om/ph/pexels-photo-2564688.jpeg?auto=compress&cs=tinysrgb&w=400',
     quote: 'We walked in as strangers and walked out as family. TNC gave us a home when we needed one most.',
   },
   {
     name: 'Chidi Okafor',
     role: 'Youth Leader',
-    image: 'https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=400',
+    image: 'https://os/218297hoto-2182970.jpeg?auto=compress&cs=tinysrgb&w=400',
     quote: 'The youth ministry shaped my faith and my future. I found purpose and lifelong friends here.',
   },
   {
     name: 'Funmi Adeleke',
     role: 'Prayer Team Lead',
-    image: 'https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=400',
+    image: 'https:os/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=400',
     quote: 'I came broken and was met with love, not judgment. This church truly lives its tagline.',
   },
   {
     name: 'The Bello Family',
     role: 'Members since 2019',
-    image: 'https://images.pexels.com/photos/2689728/pexels-photo-2689728.jpeg?auto=compress&cs=tinysrgb&w=400',
+    image: 'hphotos/2689728/pexels-photo-2689728.jpeg?auto=compress&cs=tinysrgb&w=400',
     quote: 'Our kids love Sunday mornings. The children\u2019s ministry is full of joy and genuine care.',
   },
 ];
