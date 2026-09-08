@@ -43,9 +43,9 @@ export default function About() {
             <p className="text-primary-700 font-600 text-sm uppercase tracking-widest mb-3">Our Story</p>
             <h2 className="font-display text-3xl md:text-4xl font-700 text-ink mb-6">A Church Built on Love</h2>
             <p className="text-ink/70 text-lg leading-relaxed mb-4">
-              The Neighbourhood Church began in 2008 with a simple vision: to create a place where everyone
+              The Neighbourhood Church began in 2025 with a simple vision: to create a place where everyone
               feels they truly belong. What started as a small gathering in a living room has grown into a
-              vibrant family of over 3,500 members.
+              vibrant family of over 500 members.
             </p>
             <p className="text-ink/70 text-lg leading-relaxed">
               We believe the church is not a building but a people — called to love God, love one another,

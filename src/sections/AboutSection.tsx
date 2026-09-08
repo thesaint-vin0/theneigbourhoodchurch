@@ -54,9 +54,9 @@ export default function About() {
               A Church Built on Love, Growing in Faith
             </h2>
             <p className="text-ink/70 text-lg leading-relaxed mb-4">
-              The Neighbourhood Church began in 2008 with a simple vision: to create a place where everyone
+              The Neighbourhood Church began in 2025 with a simple vision: to create a place where everyone
               feels they truly belong. What started as a small gathering in a living room has grown into a
-              vibrant family of over 3,500 members.
+              vibrant family of over 500 members.
             </p>
             <p className="text-ink/70 text-lg leading-relaxed mb-8">
               We believe the church is not a building but a people — called to love God, love one another,
