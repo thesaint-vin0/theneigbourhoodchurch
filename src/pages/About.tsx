@@ -34,7 +34,7 @@ export default function About() {
         <div className="container-tnc grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           <Reveal>
             <img
-              src="/images/WhatsApp Image 2026-09-06 at 13.57.34.jpeg"
+              src="/images/comb.jpeg"
               alt="Church"
               className="rounded-3xl shadow-glow w-full object-cover aspect-[4/3]"
             />
