@@ -16,6 +16,8 @@ export interface SiteContent {
   address: string;
   map_embed: string;
   service_times: { day:string; time:string; label:string }[];
+  live_service_enabled: boolean;
+  live_video_url: string;
 }
 
 export interface HomeContent {
@@ -39,6 +41,8 @@ const defaults: SiteContent = {
   twitter: fallbackChurchInfo.socials.find(s => s.icon === 'twitter')?.url || '',
   youtube: fallbackChurchInfo.socials.find(s => s.icon === 'youtube')?.url || '',
   service_times: fallbackChurchInfo.serviceTimes,
+  live_service_enabled: false,
+  live_video_url: '',
 };
 
 export const defaultHomeContent: HomeContent = {

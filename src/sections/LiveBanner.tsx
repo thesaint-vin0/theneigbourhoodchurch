@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Clock, MapPin, ArrowRight } from 'lucide-react';
 import { churchInfo } from '../data/site';
@@ -7,7 +6,17 @@ import { useEffect, useState } from 'react';
 
 export default function LiveBanner() {
   const [site, setSite] = useState<SiteContent | null>(null);
-  useEffect(() => { getSiteContent().then(setSite); }, []);
+
+  useEffect(() => {
+    getSiteContent().then(setSite);
+  }, []);
+
+  // Keep the banner completely hidden until the live-service settings are loaded.
+  // It is shown only when an administrator has enabled the live service and
+  // supplied a live video URL.
+  if (!site) return null;
+  if (!site.live_service_enabled || !site.live_video_url?.trim()) return null;
+
   const info = site || churchInfo;
 
   return (
@@ -32,9 +41,14 @@ export default function LiveBanner() {
               <MapPin className="w-3.5 h-3.5" /> {info.address}
             </span>
           </div>
-          <Link to="/sermons" className="flex items-center gap-1 text-sm font-600 text-primary-700 hover:gap-2 transition-all">
+          <a
+            href={site.live_video_url}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-1 text-sm font-600 text-primary-700 hover:gap-2 transition-all"
+          >
             Watch Live <ArrowRight className="w-4 h-4" />
-          </Link>
+          </a>
         </div>
       </div>
     </motion.div>
