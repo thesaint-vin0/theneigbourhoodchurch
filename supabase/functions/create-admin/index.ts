@@ -9,7 +9,7 @@ Deno.serve(async req=>{
   const admin=createClient(url,service); const token=auth.replace(/^Bearer\s+/i,''); const{data:{user},error:userError}=await admin.auth.getUser(token); if(userError||!user)return json({error:'Your session is invalid or expired. Please sign in again.'},401)
   const{data:caller,error:callerError}=await admin.from('profiles').select('role').eq('id',user.id).maybeSingle(); if(callerError)throw callerError
   if(caller?.role!=='super_admin')return json({error:'Only a super administrator can create administrators.'},403)
-  const body=await req.json();const email=String(body.email||'').trim().toLowerCase();const password=String(body.password||'');const full_name=String(body.full_name||'').trim();const role=body.role==='editor'?'editor':'admin';if(!email||!password||password.length<8)return json({error:'Email and password (minimum 8 characters) are required.'},400)
+  const body=await req.json();const email=String(body.email||'').trim().toLowerCase();const password=String(body.password||'');const full_name=String(body.full_name||'').trim();const allowedRoles=['admin','editor']; const role=allowedRoles.includes(String(body.role)) ? String(body.role) : 'admin';if(!email||!password||password.length<8)return json({error:'Email and password (minimum 8 characters) are required.'},400)
   const{data:newUser,error:createError}=await admin.auth.admin.createUser({email,password,email_confirm:true,user_metadata:{full_name}});if(createError)throw createError
   const{error:profileError}=await admin.from('profiles').upsert({id:newUser.user.id,email,full_name,role,updated_at:new Date().toISOString()});if(profileError){await admin.auth.admin.deleteUser(newUser.user.id);throw profileError}
   return json({id:newUser.user.id,email,role})
