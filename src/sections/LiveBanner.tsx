@@ -8,14 +8,23 @@ export default function LiveBanner() {
   const [site, setSite] = useState<SiteContent | null>(null);
 
   useEffect(() => {
-    getSiteContent().then(setSite);
+    let mounted = true;
+
+    getSiteContent().then((content) => {
+      if (mounted) setSite(content);
+    });
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
-  // Keep the banner completely hidden until the live-service settings are loaded.
-  // It is shown only when an administrator has enabled the live service and
-  // supplied a live video URL.
-  if (!site) return null;
-  if (!site.live_service_enabled || !site.live_video_url?.trim()) return null;
+  // The banner is intentionally hidden until the CMS settings have loaded.
+  // It is shown only when an admin has enabled the live service and supplied
+  // a live video URL.
+  if (!site || !site.live_service_enabled || !site.live_video_url?.trim()) {
+    return null;
+  }
 
   const info = site || churchInfo;
 
