@@ -29,16 +29,27 @@ Deno.serve(async req => {
 
     const body = await req.json()
     const targetId = String(body.id || '')
+    const action = String(body.action || 'change_role')
     const role = String(body.role || '')
     const allowedRoles = ['admin', 'editor']
 
-    if (!targetId || !allowedRoles.includes(role)) return json({ error: 'A valid administrator ID and role are required.' }, 400)
-    if (targetId === user.id) return json({ error: 'You cannot change your own role.' }, 400)
+    if (!targetId) return json({ error: 'A valid administrator ID is required.' }, 400)
+    if (targetId === user.id) return json({ error: 'You cannot manage your own account from this page.' }, 400)
 
-    const { data: target, error: targetError } = await admin.from('profiles').select('id,role').eq('id', targetId).maybeSingle()
+    const { data: target, error: targetError } = await admin.from('profiles').select('id,role,email,full_name').eq('id', targetId).maybeSingle()
     if (targetError) throw targetError
     if (!target) return json({ error: 'Administrator not found.' }, 404)
-    if (target.role === 'super_admin') return json({ error: 'The Super Admin role cannot be changed here.' }, 400)
+    if (target.role === 'super_admin') return json({ error: 'The Super Admin account is protected and cannot be removed or have its role changed here.' }, 400)
+
+    if (action === 'delete') {
+      const { error: deleteError } = await admin.auth.admin.deleteUser(targetId)
+      if (deleteError) throw deleteError
+      return json({ id: targetId, deleted: true })
+    }
+
+    if (action !== 'change_role' || !allowedRoles.includes(role)) {
+      return json({ error: 'A valid administrator action and role are required.' }, 400)
+    }
 
     const { error } = await admin.from('profiles').update({ role, updated_at: new Date().toISOString() }).eq('id', targetId)
     if (error) throw error

@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState } from 'react'
-import { RefreshCw, Save, UserPlus } from 'lucide-react'
+import { RefreshCw, Save, Trash2, UserPlus } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import type { Profile, Role } from '../types'
@@ -17,6 +17,7 @@ export default function AdminManagement() {
   const [msg, setMsg] = useState('')
   const [busy, setBusy] = useState(false)
   const [savingRole, setSavingRole] = useState<string | null>(null)
+  const [removingId, setRemovingId] = useState<string | null>(null)
 
   async function load() {
     const { data, error } = await supabase
@@ -50,6 +51,38 @@ export default function AdminManagement() {
     } catch (err) {
       setMsg(err instanceof Error ? err.message : 'Unable to create administrator')
     } finally { setBusy(false) }
+  }
+
+  async function removeAdmin(admin: Profile) {
+    if (admin.role === 'super_admin') {
+      setMsg('The Super Admin account cannot be removed here.')
+      return
+    }
+
+    const confirmed = window.confirm(
+      `Remove ${admin.full_name || admin.email || 'this staff account'}? This permanently removes the account and prevents them from signing in.`
+    )
+    if (!confirmed) return
+
+    setRemovingId(admin.id)
+    setMsg('')
+    try {
+      const { data, error } = await supabase.functions.invoke('manage-admin', {
+        body: { id: admin.id, action: 'delete' },
+      })
+      if (error) {
+        let detail = ''
+        try { detail = (await (error as any).context?.json?.())?.error || '' } catch {}
+        throw new Error(detail || error.message || 'Unable to remove administrator')
+      }
+      if (data?.error) throw new Error(data.error)
+      setMsg(`${admin.full_name || admin.email || 'Staff account'} was removed successfully.`)
+      await load()
+    } catch (err) {
+      setMsg(err instanceof Error ? err.message : 'Unable to remove administrator')
+    } finally {
+      setRemovingId(null)
+    }
   }
 
   async function changeRole(id: string, nextRole: Role) {
@@ -106,6 +139,16 @@ export default function AdminManagement() {
                 {assignableRoles.map(r => <option key={r} value={r}>{roleLabels[r]}</option>)}
               </select>
               {savingRole === a.id && <Save size={16} className="text-slate-400" />}
+              <button
+                type="button"
+                onClick={() => removeAdmin(a)}
+                disabled={savingRole === a.id || removingId === a.id}
+                className="ml-auto inline-flex items-center gap-1.5 rounded-lg border border-red-200 px-3 py-2 text-sm text-red-600 hover:bg-red-50 disabled:opacity-50"
+                title="Permanently remove this account"
+              >
+                <Trash2 size={15} />
+                {removingId === a.id ? 'Removing…' : 'Remove'}
+              </button>
             </div>}
           </div>)}
           {!admins.length && <div className="text-sm text-slate-500">No staff accounts found.</div>}
